@@ -15,64 +15,8 @@
 
 OUTPUTFILE="/storage/remoteinfo.txt"
 
-fancycat()
-{
-# $1 = file $2 = message if file not found
-    printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -f $1 ]; then
-        printf "\n" >> $OUTPUTFILE
-        cat $1 | tr '\000' '\n' >> $OUTPUTFILE
-    else
-        printf " $2\n" >> $OUTPUTFILE
-    fi
-}
-
-fancychk()
-{
-   printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -f $1 ]; then
-        printf " Set by user!\n" >> $OUTPUTFILE
-    else
-        printf " Unset by user!\n" >> $OUTPUTFILE
-    fi
-}
-
-fancycatdir()
-{
-# $1 = directory $2 = filename pattern $3 = message if file not found
-    printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -d $1 ]; then
-        printf "\n" >> $OUTPUTFILE
-        for filename in $1/$2
-        do
-            [ -e $filename ] || continue
-            if [ -f $filename ]; then
-                fancycat $filename $3
-            fi
-        done
-    else
-        printf " Directory Not Found!\n"
-    fi
-}
-
-wildcat()
-{
-# $1 = filename pattern $2 = message if file not found
-    printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -e $1 ]; then
-        printf "\n" >> $OUTPUTFILE
-        for filename in $1
-        do
-            [ -e $filename ] || continue
-            if [ -f $filename ]; then
-                fancycat $filename $2
-            fi
-        done
-    else
-        printf " $2\n" >> $OUTPUTFILE
-    fi
-}
-
+# source helper functions
+. debug-scripts-helper.sh
 
 printf "CoreELEC Remote Control Information...\n\n" > $OUTPUTFILE
 
@@ -97,12 +41,12 @@ fancycat "/storage/.kodi/userdata/Lircmap.xml" "Unset by user!"
 fancycat "/storage/.kodi/userdata/keyboard.xml" "Unset by user!"
 fancycatdir "/storage/.kodi/userdata/keymaps" "*.xml" "Unset by user!"
 
-printf "------------ BL301 ------------\n" >> $OUTPUTFILE
-
-if [[ -x /usr/sbin/checkbl301 ]]; then
+header "BL301"
+if [ -x /usr/sbin/checkbl301 ]; then
+  printf "\n" >> $OUTPUTFILE
   /usr/sbin/checkbl301 -v >> $OUTPUTFILE
 else
-  printf "checkbl301 not found!\n"
+  printf "\ncheckbl301 not found!\n" >> $OUTPUTFILE
 fi
 
 if [ "$1" != "-r" ]; then

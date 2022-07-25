@@ -15,64 +15,8 @@
 
 OUTPUTFILE="/storage/dispinfo.txt"
 
-fancycat()
-{
-# $1 = file $2 = message if file not found
-    printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -f $1 ]; then
-        printf "\n" >> $OUTPUTFILE
-        cat $1 | tr '\000' '\n' >> $OUTPUTFILE
-    else
-        printf " $2\n" >> $OUTPUTFILE
-    fi
-}
-
-fancychk()
-{
-   printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -f $1 ]; then
-        printf " Set by user!\n" >> $OUTPUTFILE
-    else
-        printf " Unset by user!\n" >> $OUTPUTFILE
-    fi
-}
-
-fancycatdir()
-{
-# $1 = directory $2 = filename pattern $3 = message if file not found
-    printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -d $1 ]; then
-        printf "\n" >> $OUTPUTFILE
-        for filename in $1/$2
-        do
-            [ -e $filename ] || continue
-            if [ -f $filename ]; then
-                fancycat $filename $3
-            fi
-        done
-    else
-        printf " Directory Not Found!\n"
-    fi
-}
-
-wildcat()
-{
-# $1 = filename pattern $2 = message if file not found
-    printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -e $1 ]; then
-        printf "\n" >> $OUTPUTFILE
-        for filename in $1
-        do
-            [ -e $filename ] || continue
-            if [ -f $filename ]; then
-                fancycat $filename $2
-            fi
-        done
-    else
-        printf " $2\n" >> $OUTPUTFILE
-    fi
-}
-
+# source helper functions
+. debug-scripts-helper.sh
 
 printf "CoreELEC Display Information...\n\n" > $OUTPUTFILE
 
@@ -101,7 +45,7 @@ fancycat "/sys/module/am_vecm/parameters/video_process_status" "Not Found!"
 fancycat "/sys/module/am_vecm/parameters/hdr_policy" "Not Found!"
 fancycat "/sys/class/display/vinfo" "Not Found!"
 
-printf "------------ kodi display settings ------------" >> $OUTPUTFILE
+header "kodi display settings"
 if [ -f /storage/.kodi/userdata/guisettings.xml ]; then
     printf "\n" >> $OUTPUTFILE
     for tag in "coreelec.amlogic.limit8bit" \

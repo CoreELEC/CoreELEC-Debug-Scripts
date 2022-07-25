@@ -15,64 +15,8 @@
 
 OUTPUTFILE="/storage/audinfo.txt"
 
-fancycat()
-{
-# $1 = file $2 = message if file not found
-    printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -f $1 ]; then
-        printf "\n" >> $OUTPUTFILE
-        cat $1 | tr '\000' '\n' >> $OUTPUTFILE
-    else
-        printf " $2\n" >> $OUTPUTFILE
-    fi
-}
-
-fancychk()
-{
-   printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -f $1 ]; then
-        printf " Set by user!\n" >> $OUTPUTFILE
-    else
-        printf " Unset by user!\n" >> $OUTPUTFILE
-    fi
-}
-
-fancycatdir()
-{
-# $1 = directory $2 = filename pattern $3 = message if file not found
-    printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -d $1 ]; then
-        printf "\n" >> $OUTPUTFILE
-        for filename in $1/$2
-        do
-            [ -e $filename ] || continue
-            if [ -f $filename ]; then
-                fancycat $filename $3
-            fi
-        done
-    else
-        printf " Directory Not Found!\n"
-    fi
-}
-
-wildcat()
-{
-# $1 = filename pattern $2 = message if file not found
-    printf "------------ $1 ------------" >> $OUTPUTFILE
-    if [ -e $1 ]; then
-        printf "\n" >> $OUTPUTFILE
-        for filename in $1
-        do
-            [ -e $filename ] || continue
-            if [ -f $filename ]; then
-                fancycat $filename $2
-            fi
-        done
-    else
-        printf " $2\n" >> $OUTPUTFILE
-    fi
-}
-
+# source helper functions
+. debug-scripts-helper.sh
 
 printf "CoreELEC Audio Information...\n\n" > $OUTPUTFILE
 
@@ -89,7 +33,7 @@ fi
 fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/aud_cap" "Not Found!"
 fancycat "/proc/device-tree/pinctrl@ff634480/spdifout/mux/groups" "Not Found!"
 
-printf "------------ /sys/class/sound ------------" >> $OUTPUTFILE
+header "/sys/class/sound"
 if [ -d /sys/class/sound ]; then
     for soundcard in `ls -d /sys/class/sound/card*`
         do
@@ -115,18 +59,16 @@ fi
 fancycat "/proc/asound/cards" "Not Found!"
 fancycat "/proc/asound/pcm" "Not Found!"
 
-printf "------------ aplay ------------" >> $OUTPUTFILE
 if [ -x `which aplay` ]; then
+    header "aplay -l"
     printf "\n" >> $OUTPUTFILE
-    printf "------------ aplay -l ------------\n" >> $OUTPUTFILE
     aplay -l >> $OUTPUTFILE
-    printf "------------ aplay -L ------------\n" >> $OUTPUTFILE
+    header "aplay -L"
+    printf "\n" >> $OUTPUTFILE
     aplay -L >> $OUTPUTFILE
-else
-    printf " Not Found!\n" >> $OUTPUTFILE
 fi
 
-printf "------------ kodi audio settings ------------" >> $OUTPUTFILE
+header "kodi audio settings"
 if [ -f /storage/.kodi/userdata/guisettings.xml ]; then
     printf "\n" >> $OUTPUTFILE
     for tag in "accessibility.audiohearing" \
@@ -160,19 +102,13 @@ if [ -f /storage/.kodi/userdata/guisettings.xml ]; then
                "musicplayer.seekdelay" \
                "musicplayer.seeksteps"
     do
-        printf "$tag: " >> $OUTPUTFILE
         value=$(cat /storage/.kodi/userdata/guisettings.xml |grep "\"$tag\"" |grep -o '>.*<' |sed -E 's/[<>]//g')
-        [ -n "$value" ] && printf "$value" >> $OUTPUTFILE
-        printf "\n" >> $OUTPUTFILE
+        printf "%s: %s\n" "$tag" "$value" >> $OUTPUTFILE
     done
-    printf "mute: " >> $OUTPUTFILE
     value=$(cat /storage/.kodi/userdata/guisettings.xml |awk -F '[<>]' '/mute/ {print $3}')
-    [ -n "$value" ] && printf "$value" >> $OUTPUTFILE
-    printf "\n" >> $OUTPUTFILE
-    printf "volumelevel: " >> $OUTPUTFILE
+    printf "mute: %s\n" "$value" >> $OUTPUTFILE
     value=$(cat /storage/.kodi/userdata/guisettings.xml |awk -F '[<>]' '/fvolumelevel/ {print $3}')
-    [ -n "$value" ] && printf "$value" >> $OUTPUTFILE
-    printf "\n" >> $OUTPUTFILE
+    printf "volumelevel: %s\n" "$value" >> $OUTPUTFILE
 else
     printf " Not Found!\n" >> $OUTPUTFILE
 fi
