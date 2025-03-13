@@ -24,6 +24,7 @@ if [ "$1" != "-r" ]; then
     fancycat "/etc/os-release" "Not Found!"
     fancycat "/proc/device-tree/coreelec-dt-id" "Not Found!"
     fancycat "/proc/device-tree/le-dt-id" "Not Found!"
+    fancycat "/proc/device-tree/amlogic-dt-id" "Not Found!"
     fancycat "/proc/cmdline" "Not Found!"
 fi
 fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/edid" "Not Found!"
@@ -35,25 +36,26 @@ fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/dv_cap" "Not Found!"
 fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/attr" "Not Found!"
 fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/disp_cap" "Not Found!"
 fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/vesa_cap" "Not Found!"
-fancychk "/flash/vesa.enable"
-fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/custom_mode" "Not Found!"
 fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/preferred_mode" "Not Found!"
 fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/hdr_cap" "Not Found!"
-fancycat "/sys/module/am_vecm/parameters/hdr_mode" "Not Found!"
-fancycat "/sys/module/am_vecm/parameters/sdr_mode" "Not Found!"
-fancycat "/sys/module/am_vecm/parameters/video_process_status" "Not Found!"
-fancycat "/sys/module/am_vecm/parameters/hdr_policy" "Not Found!"
+fancycat "/sys/module/aml_media/parameters/hdr_mode" "Not Found!"
+fancycat "/sys/module/aml_media/parameters/sdr_mode" "Not Found!"
+fancycat "/sys/module/aml_media/parameters/video_process_status" "Not Found!"
+fancycat "/sys/module/aml_media/parameters/hdr_policy" "Not Found!"
 fancycat "/sys/class/display/vinfo" "Not Found!"
 
 header "kodi display settings"
 if [ -f /storage/.kodi/userdata/guisettings.xml ]; then
     printf "\n" >> $OUTPUTFILE
-    for tag in "coreelec.amlogic.limit8bit" \
-               "coreelec.amlogic.force422" \
-               "coreelec.amlogic.deinterlacing" \
+    for tag in "coreelec.amlogic.limitcd" \
+               "coreelec.amlogic.forcecs" \
                "coreelec.amlogic.noisereduction" \
                "coreelec.amlogic.hdr2sdr" \
                "coreelec.amlogic.sdr2hdr" \
+               "coreelec.amlogic.sdr2dv" \
+               "coreelec.amlogic.hdr2dv" \
+               "coreelec.amlogic.disabledolbyvision" \
+               "coreelec.amlogic.dolbyvisionled" \
                "videoplayer.adjustrefreshrate" \
                "videoplayer.useamcodec" \
                "videoplayer.useamcodech264" \
@@ -72,12 +74,10 @@ else
     printf " Not Found!\n" >> $OUTPUTFILE
 fi
 
-fancycat "/storage/.kodi/userdata/disp_cap" "Unset by user!"
-fancycat "/storage/.kodi/userdata/disp_add" "Unset by user!"
-fancycat "/flash/resolution.ini"  "Not Found!"
 if [ "$1" != "-r" ]; then
     fancycat "/flash/boot.ini"  "Not Found!"
     fancycat "/flash/config.ini"  "Not Found!"
+    fancycat "/flash/resolution.ini"  "Not Found!"
     fancycat "/storage/.config/autostart.sh" "Unset by user!"
 fi
 

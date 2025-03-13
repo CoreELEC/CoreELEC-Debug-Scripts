@@ -24,6 +24,7 @@ if [ "$1" != "-r" ]; then
     fancycat "/etc/os-release" "Not Found!"
     fancycat "/proc/device-tree/coreelec-dt-id" "Not Found!"
     fancycat "/proc/device-tree/le-dt-id" "Not Found!"
+    fancycat "/proc/device-tree/amlogic-dt-id" "Not Found!"
     fancycat "/proc/cmdline" "Not Found!"
 fi
 

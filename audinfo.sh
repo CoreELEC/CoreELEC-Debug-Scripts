@@ -24,6 +24,7 @@ if [ "$1" != "-r" ]; then
     fancycat "/etc/os-release" "Not Found!"
     fancycat "/proc/device-tree/coreelec-dt-id" "Not Found!"
     fancycat "/proc/device-tree/le-dt-id" "Not Found!"
+    fancycat "/proc/device-tree/amlogic-dt-id" "Not Found!"
     fancycat "/proc/cmdline" "Not Found!"
     fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/edid_parsing" "Not Found!"
     fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/rawedid" "Not Found!"
@@ -31,7 +32,6 @@ if [ "$1" != "-r" ]; then
 fi
 
 fancycat "/sys/devices/virtual/amhdmitx/amhdmitx0/aud_cap" "Not Found!"
-fancycat "/proc/device-tree/pinctrl@ff634480/spdifout/mux/groups" "Not Found!"
 
 header "/sys/class/sound"
 if [ -d /sys/class/sound ]; then
