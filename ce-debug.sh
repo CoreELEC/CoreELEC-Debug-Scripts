@@ -50,6 +50,10 @@ header "lsusb"
 printf "\n" >> $OUTPUTFILE
 lsusb >> $OUTPUTFILE
 
+header "opentee"
+printf "\n" >> $OUTPUTFILE
+journalctl -u opentee_linuxdriver >> $OUTPUTFILE
+
 printf "\n" >> $OUTPUTFILE
 if [ -x ./dispinfo.sh ]; then
     ./dispinfo.sh -r >> $OUTPUTFILE
