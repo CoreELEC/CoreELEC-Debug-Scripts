@@ -34,6 +34,9 @@ fancycattail "/flash/cfgload" "-c +73" "Not Found!"
 fancycattail "/flash/aml_autoscript" "-c +73" "Not Found!"
 fancycat "/storage/.config/autostart.sh" "Unset by user!"
 fancycat "/storage/init-previous.log" "Not Found!"
+fancycat "/tmp/tee.message" "Not Found!"
+fancycat "/tmp/dovi.message" "Not Found!"
+fancycat "/tmp/firmware.message" "Not Found!"
 
 header "fw_printenv"
 if [ -e /dev/env ]; then
